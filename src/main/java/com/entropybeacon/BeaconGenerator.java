@@ -1,6 +1,7 @@
 package main.java.com.entropybeacon;
 
 import java.security.SecureRandom;
+import java.sql.Date;
 import java.util.Arrays;
 import java.util.HexFormat;
 import java.time.Instant;
@@ -20,34 +21,48 @@ public class BeaconGenerator {
             System.out.println("Beacon Generator");
     
     
-            SecureRandom random = new SecureRandom();
+            String beaconValue = generateBeaconValue();
+            String jsonLog = createJSONlog(beaconValue);
             
-            byte[] randomBytes = new byte[32];
-            random.nextBytes(randomBytes);
+            System.out.println("Timestamp: " + DateTimeFormatter.ISO_INSTANT.format(Instant.now()));
+            System.out.println("Beacon Value: " + beaconValue);
             
-            HexFormat hex = HexFormat.of();        
-            String hexValue = hex.formatHex(randomBytes);
-    
-            Instant timestamp = Instant.now();
-    
-            String logEntry = timestamp + ", " + hexValue + "\n";
-    
-            String formattedTimeStamp = DateTimeFormatter.ISO_INSTANT.format(timestamp);
-            String jsonLog = String.format("{ \n \"timestamp\": \"%s\", \n \"beaconValue\": \"%s\" \n}, \n", formattedTimeStamp, hexValue);
+            writeToFile(jsonLog);
 
+ 
+
+    }
+
+    
+    private static String generateBeaconValue() {
+
+        SecureRandom random = new SecureRandom();
+        byte[] randomBytes = new byte[32];
+        random.nextBytes(randomBytes);
+
+        HexFormat hex = HexFormat.of();
+        String beaconValue = hex.formatHex(randomBytes);
+        
+        return beaconValue;
+    }
+
+    private static String createJSONlog(String beaconValue) {
+
+        Instant timestamp = Instant.now();
+        String formattedTimeStamp = DateTimeFormatter.ISO_INSTANT.format(timestamp);
+        String jsonLog = String.format("{ \n \"timestamp\": \"%s\", \n \"beaconValue\": \"%s\" \n}, \n", formattedTimeStamp, beaconValue);
+        return jsonLog;
+
+    }
+
+    private static void writeToFile(String content) {
         try {
-
-            Files.writeString(Paths.get(FILENAME), jsonLog, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
+            Files.writeString(Paths.get(FILENAME), content, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             System.out.println("Success: Writing to log file.");
-
         } catch (IOException e) {
             System.out.println("Error: Failed to write to log file." + e.getMessage());
         }
-        
-        System.out.println("Timestamp: " + timestamp.toString());
-        System.out.println("Beacon Value: " + hexValue);
-
-
     }
+
+
 }
