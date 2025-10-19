@@ -1,4 +1,4 @@
-package main.java.com.entropybeacon;
+package com.entropybeacon;
 
 import java.security.SecureRandom;
 import java.sql.Date;
@@ -16,6 +16,7 @@ import java.nio.file.StandardOpenOption;
 public class BeaconGenerator {
 
     private static final String FILENAME = "beacon.log";
+    private static final int BEACON_SIZE_BYTES = 16;
 
     public static void main(String[] args) {
             System.out.println("Beacon Generator");
@@ -29,7 +30,6 @@ public class BeaconGenerator {
             
             writeToFile(jsonLog);
 
- 
 
     }
 
@@ -37,7 +37,7 @@ public class BeaconGenerator {
     private static String generateBeaconValue() {
 
         SecureRandom random = new SecureRandom();
-        byte[] randomBytes = new byte[32];
+        byte[] randomBytes = new byte[BEACON_SIZE_BYTES];
         random.nextBytes(randomBytes);
 
         HexFormat hex = HexFormat.of();
