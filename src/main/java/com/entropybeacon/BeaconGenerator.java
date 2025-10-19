@@ -1,5 +1,9 @@
 package com.entropybeacon;
 
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
 import java.security.SecureRandom;
 import java.sql.Date;
 import java.util.Arrays;
@@ -13,11 +17,32 @@ import java.nio.file.StandardOpenOption;
 
 
 
+@Component
 public class BeaconGenerator {
 
     private static final String FILENAME = "beacon.log";
     private static final int BEACON_SIZE_BYTES = 16;
 
+    @Scheduled(fixedRate = 60000)
+   
+    public void beaconGenertorAndLog() 
+    {
+        System.out.println("[Scheduled Task] Generating Beacon Signal ...");
+
+        try {
+            String beaconValue = generateBeaconValue();
+            String jsonLog = createJSONlog(beaconValue);
+
+            System.out.println("Timestamp: " + DateTimeFormatter.ISO_INSTANT.format(Instant.now()));
+            System.out.println("Beacon Value: " + beaconValue);
+
+            writeToFile(jsonLog);
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+/* 
     public static void main(String[] args) {
             System.out.println("Beacon Generator");
     
@@ -30,11 +55,10 @@ public class BeaconGenerator {
             
             writeToFile(jsonLog);
 
-
     }
-
+*/
     
-    private static String generateBeaconValue() {
+    private String generateBeaconValue() {
 
         SecureRandom random = new SecureRandom();
         byte[] randomBytes = new byte[BEACON_SIZE_BYTES];
@@ -46,7 +70,7 @@ public class BeaconGenerator {
         return beaconValue;
     }
 
-    private static String createJSONlog(String beaconValue) {
+    private String createJSONlog(String beaconValue) {
 
         Instant timestamp = Instant.now();
         String formattedTimeStamp = DateTimeFormatter.ISO_INSTANT.format(timestamp);
@@ -55,13 +79,11 @@ public class BeaconGenerator {
 
     }
 
-    private static void writeToFile(String content) {
-        try {
+    private void writeToFile(String content) throws IOException {
+
             Files.writeString(Paths.get(FILENAME), content, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             System.out.println("Success: Writing to log file.");
-        } catch (IOException e) {
-            System.out.println("Error: Failed to write to log file." + e.getMessage());
-        }
+
     }
 
 
