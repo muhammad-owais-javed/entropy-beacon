@@ -2,9 +2,13 @@ package com.entropybeacon;
 
 import org.jcp.xml.dsig.internal.dom.DOMSubTreeData;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
+import org.springframework.context.ApplicationContext;
+
 
 import java.security.SecureRandom;
 import java.sql.Date;
@@ -17,20 +21,30 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import java.util.concurrent.atomic.AtomicInteger; 
+
 
 
 @Component
 public class BeaconGenerator implements CommandLineRunner {
 
+    private final ApplicationContext appContext;
+
     private static final String FILENAME = "beacon.log";
     private static final int BEACON_SIZE_BYTES = 16;
     private volatile BeaconDTO latestBeaconValue = new BeaconDTO(Instant.now(), "No beacon generated yet.");
 
+    public BeaconGenerator(ApplicationContext appContext) {
+        this.appContext = appContext;
+    }
 
     //@Scheduled(cron = "0 * * * * *")
     @Override
     public void run(String... args) throws Exception{
-    
+
+       // int exitCode = 0;
+        final AtomicInteger exitCode = new AtomicInteger(0);    
+
         System.out.println("[Scheduled Task] Generating Beacon Signal ...");
 
         try {
@@ -50,8 +64,16 @@ public class BeaconGenerator implements CommandLineRunner {
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
-
+            //exitCode = 1;
+            exitCode.set(1);
             throw e;
+        }
+        finally {
+            System.out.println("[Scheduled Task] Completed with exit code: " + exitCode);
+            //SpringApplication.exit(appContext, () -> exitCode);
+            SpringApplication.exit(appContext, () -> exitCode.get());
+
+        
         }
     }
 /* 
