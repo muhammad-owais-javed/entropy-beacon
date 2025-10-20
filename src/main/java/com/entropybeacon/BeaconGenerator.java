@@ -23,6 +23,8 @@ public class BeaconGenerator {
 
     private static final String FILENAME = "beacon.log";
     private static final int BEACON_SIZE_BYTES = 16;
+    private volatile String latestBeaconValue = "No beacon generated yet.";
+
 
     @Scheduled(cron = "0 * * * * *")
    
@@ -32,10 +34,14 @@ public class BeaconGenerator {
 
         try {
             String beaconValue = generateBeaconValue();
+            
+            this.latestBeaconValue = beaconValue;
+
             String jsonLog = createJSONlog(beaconValue);
 
             System.out.println("Timestamp: " + DateTimeFormatter.ISO_INSTANT.format(Instant.now()));
             System.out.println("Beacon Value: " + beaconValue);
+
 
             writeToFile(jsonLog);
 
@@ -87,5 +93,9 @@ public class BeaconGenerator {
 
     }
 
+    public String getLatestBeaconValue() {
+
+        return this.latestBeaconValue;
+    }
 
 }
