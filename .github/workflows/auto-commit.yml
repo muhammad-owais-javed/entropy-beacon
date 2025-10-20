@@ -1,3 +1,5 @@
+# .github/workflows/auto-commit.yml
+
 name: Daily Beacon Commit
 
 # This section defines what triggers the workflow.
