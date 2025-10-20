@@ -2,70 +2,34 @@
 
 name: Daily Beacon Commit
 
-# This section defines what triggers the workflow.
 on:
-  # This allows to run the workflow manually from the GitHub UI for testing.
   workflow_dispatch:
-
-  # This sets up the schedule.
   schedule:
     - cron: '0 2 * * *'
-permissions:
-  # It needs 'contents: write' permission to be able to push commits to the repository.
-  contents: write
 
-# This section defines the actual work to be done.ls 
 jobs:
-  # Define a single job named "build-and-commit".
   build-and-commit:
-    # The job will run on a virtual machine provided by GitHub, using the latest version of Ubuntu.
     runs-on: ubuntu-latest
-
     steps:
-
-      # Downloads repository's code onto the virtual machine.
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          persist-credentials: false
 
-      # Step 2: Set up Java
-      # This installs the Java Development Kit (JDK) version 17, which is needed to run the app.
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          # This caches the Maven dependencies to make future runs faster.
           cache: maven
 
-      # Step 3: Run the Java application
-      # This command executes Spring Boot application. It will start, run the
-      # CommandLineRunner, add a line to beacon.log, and then exit.
+      # Run the Java application to modify the log file
       - name: Run Beacon Generator App
         run: mvn spring-boot:run
 
-      # Step 4: Configure Git User
-      # Virtual machine needs to know "who" is making the commit.
-      # Using a generic bot name.
-      - name: Configure Git
-        run: |
-          git config user.name "Entropy Beacon Bot"
-          git config user.email "<>"
-
-      # Step 5: Commit and Push
-      - name: Commit and Push Changes
-        run: |
-          # The 'git status --porcelain' command checks if any files have been modified.
-          # If it produces any output, it means beacon.log has changed.
-          if [[ -n $(git status --porcelain) ]]; then
-            echo "Changes detected. Committing beacon.log..."
-            # Add all changed files to the staging area (this will include beacon.log).
-            git add .
-            # Create a commit with a descriptive message including the date.
-            git commit -m "feat: Generate new entropy beacon for $(date -u +'%Y-%m-%d')"
-            # Push the new commit back to your main branch on GitHub.
-            git push
-          else
-            echo "No changes to commit. The log file was not modified."
-          fi
+      # It is specifically designed to handle authentication correctly in workflows.
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          # The commit message for the change.
+          commit_message: "feat: Generate new entropy beacon for $(date -u +'%Y-%m-%d')"
+          # Optional: The name of the author for the commit.
+          commit_author: Entropy Beacon Bot <github-actions[bot]@users.noreply.github.com>
