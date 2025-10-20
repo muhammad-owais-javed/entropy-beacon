@@ -10,6 +10,9 @@ on:
   # This sets up the schedule.
   schedule:
     - cron: '0 2 * * *'
+permissions:
+  # It needs 'contents: write' permission to be able to push commits to the repository.
+  contents: write
 
 # This section defines the actual work to be done.ls 
 jobs:
@@ -23,6 +26,8 @@ jobs:
       # Downloads repository's code onto the virtual machine.
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       # Step 2: Set up Java
       # This installs the Java Development Kit (JDK) version 17, which is needed to run the app.
