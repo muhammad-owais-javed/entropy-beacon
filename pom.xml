@@ -34,7 +34,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-    
+
     </dependencies>
 
 
@@ -45,6 +45,18 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+             <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.11.0</version> <!-- A recent version of the compiler plugin -->
+            <configuration>
+                <release>17</release> <!-- Explicitly set the Java version -->
+                <!-- It forces the compiler to use the classpath instead of the module path -->
+                <forceJavacCompilerUse>true</forceJavacCompilerUse>
+            </configuration>
+        </plugin>
+
         </plugins>
     </build>
     
