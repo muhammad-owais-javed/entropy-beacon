@@ -1,5 +1,6 @@
 package com.entropybeacon;
 
+import org.jcp.xml.dsig.internal.dom.DOMSubTreeData;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class BeaconGenerator {
 
     private static final String FILENAME = "beacon.log";
     private static final int BEACON_SIZE_BYTES = 16;
-    private volatile String latestBeaconValue = "No beacon generated yet.";
+    private volatile BeaconDTO latestBeaconValue = new BeaconDTO(Instant.now(), "No beacon generated yet.");
 
 
     @Scheduled(cron = "0 * * * * *")
@@ -35,7 +36,9 @@ public class BeaconGenerator {
         try {
             String beaconValue = generateBeaconValue();
             
-            this.latestBeaconValue = beaconValue;
+           // this.latestBeaconValue = beaconValue;
+
+            this.latestBeaconValue = new BeaconDTO(Instant.now(), beaconValue);
 
             String jsonLog = createJSONlog(beaconValue);
 
@@ -93,7 +96,7 @@ public class BeaconGenerator {
 
     }
 
-    public String getLatestBeaconValue() {
+    public BeaconDTO getLatestBeaconValue() {
 
         return this.latestBeaconValue;
     }

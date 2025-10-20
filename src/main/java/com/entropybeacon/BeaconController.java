@@ -19,7 +19,7 @@ public class BeaconController {
     }
 
     @GetMapping("/latest-beacon")
-    public String getLatestBeacon() {
+    public BeaconDTO getLatestBeacon() {
         return beaconService.getLatestBeaconValue();
     }
 }
