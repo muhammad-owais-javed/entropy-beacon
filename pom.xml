@@ -1,63 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion> 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-    <!-- For managing Spring Boot versions and providing default configuration -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.5</version> 
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.2.5</version>
+        <relativePath/>
     </parent>
-
 
     <groupId>com.entropybeacon</groupId>
     <artifactId>entropy-beacon</artifactId>
-    <version>1.0-SNAPSHOT</version> <!--Under Development-->
-
+    <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
     <dependencies>
-       <dependency>
-            <!-- Spring Boot Web Starter for building web applications -->
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
-
         <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
     </dependencies>
-
 
     <build>
         <plugins>
             <plugin>
-                <!-- Spring Boot Maven Plugin for packaging and running Spring Boot applications -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-             <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.11.0</version> <!-- A recent version of the compiler plugin -->
-            <configuration>
-                <release>17</release> <!-- Explicitly set the Java version -->
-                <!-- It forces the compiler to use the classpath instead of the module path -->
-                <forceJavacCompilerUse>true</forceJavacCompilerUse>
-            </configuration>
-        </plugin>
+            <!--
+            THIS IS THE COMPLETE AND CORRECT PLUGIN CONFIGURATION
+            -->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.11.0</version>
+    <configuration>
+        <!--
+        This is the most important part. We are explicitly
+        telling Maven to use the older source/target properties.
+        -->
+        <source>17</source>
+        <target>17</target>
+
+        <!--
+        AND we are explicitly disabling the release flag by
+        providing an empty value. This overrides any default
+        from the Spring Boot parent POM.
+        -->
+        <release combine.self="override"></release>
+
+        <!-- Our required argument to fix the visibility issue -->
+        <compilerArgs>
+            <arg>--add-exports</arg>
+            <arg>java.xml.crypto/org.jcp.xml.dsig.internal.dom=ALL-UNNAMED</arg>
+        </compilerArgs>
+        </configuration>
+    </plugin>
 
         </plugins>
     </build>
-    
+
 </project>
