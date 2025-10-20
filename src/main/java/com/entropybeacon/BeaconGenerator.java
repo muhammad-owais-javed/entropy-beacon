@@ -19,18 +19,18 @@ import java.nio.file.StandardOpenOption;
 
 
 
-@Service
-public class BeaconGenerator {
+@Component
+public class BeaconGenerator implements CommandLineRunner {
 
     private static final String FILENAME = "beacon.log";
     private static final int BEACON_SIZE_BYTES = 16;
     private volatile BeaconDTO latestBeaconValue = new BeaconDTO(Instant.now(), "No beacon generated yet.");
 
 
-    @Scheduled(cron = "0 * * * * *")
-   
-    public void beaconGenertorAndLog() 
-    {
+    //@Scheduled(cron = "0 * * * * *")
+    @Override
+    public void run(String... args) throws Exception{
+    
         System.out.println("[Scheduled Task] Generating Beacon Signal ...");
 
         try {
@@ -50,6 +50,8 @@ public class BeaconGenerator {
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
+
+            throw e;
         }
     }
 /* 
