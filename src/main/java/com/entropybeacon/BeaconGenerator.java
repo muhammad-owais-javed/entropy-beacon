@@ -3,6 +3,7 @@ package com.entropybeacon;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.sql.Date;
@@ -17,13 +18,13 @@ import java.nio.file.StandardOpenOption;
 
 
 
-@Component
+@Service
 public class BeaconGenerator {
 
     private static final String FILENAME = "beacon.log";
     private static final int BEACON_SIZE_BYTES = 16;
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(cron = "0 * * * * *")
    
     public void beaconGenertorAndLog() 
     {
