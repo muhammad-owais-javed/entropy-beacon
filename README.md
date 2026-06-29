@@ -1,6 +1,6 @@
 # Entropy Beacon
 
-**Entropy Beacon** is a small, autonomous Spring Boot application designed to generate and log secure, timestamped random values. It serves as a public facing Random Number Generator (RNG) API while maintaining a historical log of all generated beacons.
+**Entropy Beacon** is a small, autonomous Spring Boot application designed to generate and log secure, timestamped random values. It provides a Random Number Generator (RNG) API while maintaining a historical log of all generated beacons.
 
 ---
 
